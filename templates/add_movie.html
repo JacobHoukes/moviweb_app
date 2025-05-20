@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MoviWeb App - Adding a movie</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Add a movie for {{ user.name }}</h1>
+    <form method="POST">
+        <label for="title">Movie title:</label>
+        <input type="text" id="title" name="title" required>
+        <button type="submit">Add movie</button>
+    </form>
+    <p><a href="/users/{{ user.id }}">Back to movies</a></p>
+</body>
+</html>

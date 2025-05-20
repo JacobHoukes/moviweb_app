@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Message</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="message-box">
+        <h1>{{ message }}</h1>
+        <a href="{{ url_for('user_profile', user_id=user_id) }}">Back to profile</a>
+    </div>
+</body>
+</html>

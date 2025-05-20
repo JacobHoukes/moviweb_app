@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template_string
+from flask import Flask, request, render_template
 from datamanager.sqlite_data_manager import SQLiteDataManager
 from models import User, Movie
 import os
@@ -15,30 +15,22 @@ data_manager = SQLiteDataManager(app)
 
 @app.route('/')
 def home():
-    """This method displays the welcome page."""
-    return render_template_string("<h1>Welcome to MovieWeb App 🎬</h1>")
+    """This method displays the homepage."""
+    return render_template('home.html')
 
 
 @app.route('/users', methods=['GET'])
 def list_users():
     """This method shows a list of all users."""
     users = data_manager.get_all_users()
-    users_html = "<ul>"
-    for user in users:
-        users_html += f"<li>{user.name} (ID: {user.id})</li>"
-    users_html += "</ul>"
-    return render_template_string("<h1>All Users</h1>" + users_html)
+    return render_template('users.html', users=users)
 
 
-@app.route('/users/<int:user_id>')
+@app.route('/users/<int:user_id>', methods=['GET'])
 def user_movies(user_id):
     """This method shows all movies for a specific user."""
     movies = data_manager.get_user_movies(user_id)
-    movie_list = "<ul>"
-    for movie in movies:
-        movie_list += f"<li>{movie.title}</li>"
-    movie_list += "</ul>"
-    return render_template_string(f"<h1>User {user_id}'s Movies</h1>" + movie_list)
+    return render_template('user_movies.html', user_id=user_id, movies=movies)
 
 
 @app.route('/add_user', methods=['GET', 'POST'])
@@ -48,15 +40,9 @@ def add_user():
         name = request.form['name']
         user = User(name=name)
         data_manager.add_user(user)
-        return render_template_string("<p>User added!</p>")
+        return render_template('message.html', message="User added!")
 
-    return '''
-        <form method="post">
-            <label>Name:</label>
-            <input name="name" type="text">
-            <input type="submit" value="Add User">
-        </form>
-    '''
+    return render_template('add_user.html')
 
 
 @app.route('/users/<int:user_id>/add_movie', methods=['GET', 'POST'])
@@ -66,42 +52,29 @@ def add_movie(user_id):
         title = request.form['title']
         movie = Movie(title=title, user_id=user_id)
         data_manager.add_movie(movie)
-        return render_template_string("<p>Movie added!</p>")
+        return render_template('message.html', message="Movie added!")
 
-    return f'''
-        <form method="post">
-            <label>Movie Title:</label>
-            <input name="title" type="text">
-            <input type="submit" value="Add Movie for User {user_id}">
-        </form>
-    '''
+    return render_template('add_movie.html', user_id=user_id)
 
 
 @app.route('/users/<int:user_id>/update_movie/<int:movie_id>', methods=['GET', 'POST'])
 def update_movie(user_id, movie_id):
-    """This method updates the title of a specific movie."""
-
+    """This method updates the rating of a specific movie."""
     if request.method == 'POST':
-        title = request.form['title']
-        movie = Movie(id=movie_id, title=title, user_id=user_id)
+        rating = request.form['rating']
+        movie = Movie(id=movie_id, user_id=user_id, rating=rating)
         data_manager.update_movie(movie)
-        return render_template_string("<p>Movie updated!</p>")
+        return render_template('message.html', message="Movie rating updated!")
 
-    return f'''
-        <form method="post">
-            <label>New Movie Title:</label>
-            <input name="title" type="text">
-            <input type="submit" value="Update Movie {movie_id} for User {user_id}">
-        </form>
-    '''
+    return render_template('update_movie.html', user_id=user_id, movie_id=movie_id)
 
 
 @app.route('/users/<int:user_id>/delete_movie/<int:movie_id>', methods=['GET'])
-def delete_movie_route(user_id, movie_id):
+def delete_movie(user_id, movie_id):
     """This method deletes a specific movie from a user's list."""
     data_manager.delete_movie(movie_id)
-    return render_template_string(f"<p>Movie {movie_id} deleted for User {user_id}!</p>")
+    return render_template('message.html', message=f"Movie {movie_id} deleted for user {user_id}!")
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5002, debug=True)
+    app.run(host='0.0.0.0', port=5001, debug=True)
