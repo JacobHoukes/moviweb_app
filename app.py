@@ -105,7 +105,7 @@ def delete_movie(user_id, movie_id):
                                    user_id=user_id)
         except Exception as e:
             db.session.rollback()
-            return render_template('message.html', message="Failed to delete movie.", user_id=user_id)
+            return render_template('message.html', message="Failed to delete movie.: {e}", user_id=user_id)
     else:
         return render_template('message.html', message="Movie not found.", user_id=user_id)
 
