@@ -1,6 +1,6 @@
 from flask import Flask, request, render_template, redirect, url_for
 from datamanager.sqlite_data_manager import SQLiteDataManager
-from models import User, Movie
+from models import User, Movie, db
 import os
 
 app = Flask(__name__)
@@ -77,21 +77,37 @@ def add_movie(user_id):
 
 @app.route('/users/<int:user_id>/update_movie/<int:movie_id>', methods=['GET', 'POST'])
 def update_movie(user_id, movie_id):
-    """This method updates the rating of a specific movie."""
+    """This method updates the rating of an existing movie for a given user."""
+    movie = Movie.query.get_or_404(movie_id)
+
     if request.method == 'POST':
-        rating = request.form['rating']
-        movie = Movie(id=movie_id, user_id=user_id, rating=rating)
-        data_manager.update_movie(movie)
-        return render_template('message.html', message="Movie rating updated!")
+        try:
+            new_rating = request.form.get('rating')
+            movie.rating = float(new_rating)
+            data_manager.update_movie(movie)
+            return redirect(url_for('user_movies', user_id=user_id))
+        except Exception as e:
+            print(f"Error updating movie rating: {e}")
+            return render_template('message.html', message="Failed to update rating.")
 
-    return render_template('update_movie.html', user_id=user_id, movie_id=movie_id)
+    return render_template('update_movie.html', movie=movie, user_id=user_id)
 
 
-@app.route('/users/<int:user_id>/delete_movie/<int:movie_id>', methods=['GET'])
+@app.route('/users/<int:user_id>/delete_movie/<int:movie_id>', methods=['POST'])
 def delete_movie(user_id, movie_id):
-    """This method deletes a specific movie from a user's list."""
-    data_manager.delete_movie(movie_id)
-    return render_template('message.html', message=f"Movie {movie_id} deleted for user {user_id}!")
+    movie = Movie.query.filter_by(id=movie_id, user_id=user_id).first()
+
+    if movie:
+        try:
+            db.session.delete(movie)
+            db.session.commit()
+            return render_template('message.html', message=f"Movie {movie.title} deleted for user {user_id}!",
+                                   user_id=user_id)
+        except Exception as e:
+            db.session.rollback()
+            return render_template('message.html', message="Failed to delete movie.", user_id=user_id)
+    else:
+        return render_template('message.html', message="Movie not found.", user_id=user_id)
 
 
 if __name__ == '__main__':
