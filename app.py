@@ -1,14 +1,15 @@
 from flask import Flask, request, render_template, redirect, url_for
 from datamanager.sqlite_data_manager import SQLiteDataManager
 from models import User, Movie, db
+from dotenv import load_dotenv
+import requests
 import os
 
 app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///movies.db'
+db.init_app(app)
 
-basedir = os.path.abspath(os.path.dirname(__file__))
-database_file = os.path.join(basedir, 'instance', 'movies.db')
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + database_file
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+load_dotenv()
 
 data_manager = SQLiteDataManager(app)
 
@@ -49,28 +50,41 @@ def add_user():
 
 @app.route('/users/<int:user_id>/add_movie', methods=['GET', 'POST'])
 def add_movie(user_id):
-    """This method adds a movie to a user's movie list."""
+    """This method adds a movie to a user's movie list using the OMDb API."""
     user = User.query.get_or_404(user_id)
+    api_key = os.getenv("API_KEY")
 
     if request.method == 'POST':
         title = request.form['title']
-        director = request.form['director']
-        year = request.form['year']
         rating = request.form['rating']
 
-        try:
-            movie = Movie(
-                title=title,
-                director=director,
-                year=int(year),
-                rating=float(rating),
-                user_id=user_id
-            )
-            data_manager.add_movie(movie)
-            return redirect(url_for('user_movies', user_id=user_id))
-        except Exception as e:
-            print(f"Failed to add movie: {e}")
-            return render_template('message.html', message="Failed to add movie.", user_id=user_id)
+        api_url = "http://www.omdbapi.com/"
+        params = {
+            "t": title,
+            "apikey": api_key
+        }
+
+        response = requests.get(api_url, params=params)
+        if response.status_code == 200:
+            data = response.json()
+            if data.get("Response") == "True":
+                try:
+                    movie = Movie(
+                        title=data.get("Title", title),
+                        director=data.get("Director", "Unknown"),
+                        year=int(data.get("Year", 0)),
+                        rating=float(rating),
+                        user_id=user_id
+                    )
+                    data_manager.add_movie(movie)
+                    return redirect(url_for('user_movies', user_id=user_id))
+                except Exception as e:
+                    print(f"Error saving movie: {e}")
+                    return render_template('message.html', message="Failed to save movie.", user_id=user_id)
+            else:
+                return render_template('message.html', message="Movie not found in OMDb API.", user_id=user_id)
+        else:
+            return render_template('message.html', message="Error connecting to OMDb API.", user_id=user_id)
 
     return render_template('add_movie.html', user=user)
 
@@ -78,19 +92,27 @@ def add_movie(user_id):
 @app.route('/users/<int:user_id>/update_movie/<int:movie_id>', methods=['GET', 'POST'])
 def update_movie(user_id, movie_id):
     """This method updates the rating of an existing movie for a given user."""
+    user = User.query.get_or_404(user_id)
     movie = Movie.query.get_or_404(movie_id)
 
     if request.method == 'POST':
         try:
-            new_rating = request.form.get('rating')
-            movie.rating = float(new_rating)
-            data_manager.update_movie(movie)
+            new_title = request.form.get("title")
+            new_rating = request.form.get("rating")
+
+            if new_title:
+                movie.title = new_title
+            if new_rating:
+                movie.rating = float(new_rating)
+
+            db.session.commit()
             return redirect(url_for('user_movies', user_id=user_id))
         except Exception as e:
+            db.session.rollback()
             print(f"Error updating movie rating: {e}")
             return render_template('message.html', message="Failed to update rating.")
 
-    return render_template('update_movie.html', movie=movie, user_id=user_id)
+    return render_template('update_movie.html', user=user, movie=movie)
 
 
 @app.route('/users/<int:user_id>/delete_movie/<int:movie_id>', methods=['POST'])
@@ -108,6 +130,16 @@ def delete_movie(user_id, movie_id):
             return render_template('message.html', message="Failed to delete movie.: {e}", user_id=user_id)
     else:
         return render_template('message.html', message="Movie not found.", user_id=user_id)
+
+
+@app.errorhandler(404)
+def page_not_found(error):
+    return render_template("404.html"), 404
+
+
+@app.errorhandler(500)
+def internal_server_error(error):
+    return render_template("500.html"), 500
 
 
 if __name__ == '__main__':

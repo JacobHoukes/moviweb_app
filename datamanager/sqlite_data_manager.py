@@ -1,11 +1,11 @@
 from models import db, User, Movie
 from datamanager.data_manager_interface import DataManagerInterface
 
+
 class SQLiteDataManager(DataManagerInterface):
     def __init__(self, app):
         """This method connects SQLAlchemy to the Flask app and creates tables."""
         self.app = app
-        db.init_app(app)
         with app.app_context():
             db.create_all()
 
