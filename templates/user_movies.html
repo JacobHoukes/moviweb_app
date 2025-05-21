@@ -2,20 +2,24 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>MovieWeb App - {{ user.name }}'s movies</title>
+    <title>{{ user.name }}'s Movies - MovieWeb App</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <h1>{{ user.name }}'s Favorite Movies</h1>
+
     <ul>
         {% for movie in movies %}
             <li>
-                {{ movie.title }}
+                {{ movie.title }} ({{ movie.year }}) - Directed by {{ movie.director }} - Rating: {{ movie.rating }}
                 <a href="/users/{{ user.id }}/update_movie/{{ movie.id }}">Update</a>
                 <a href="/users/{{ user.id }}/delete_movie/{{ movie.id }}">Delete</a>
             </li>
+        {% else %}
+            <li>No movies found for this user.</li>
         {% endfor %}
     </ul>
+
     <p><a href="/users/{{ user.id }}/add_movie">Add Movie</a></p>
     <p><a href="/users">Back to Users</a></p>
 </body>

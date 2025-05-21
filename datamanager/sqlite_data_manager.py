@@ -39,21 +39,18 @@ class SQLiteDataManager(DataManagerInterface):
             print(f"This method failed to add movie: {str(e)}")
 
     def update_movie(self, movie):
-        """This method updates a movie’s title based on its ID."""
-        existing = Movie.query.get(movie.id)
-        if existing:
-            existing.title = movie.title
-            db.session.commit()
-            print(f"Movie '{movie.title}' updated successfully!")
-        else:
-            print(f"This method could not find a movie with ID {movie.id}.")
+        """This method updates the rating of a specific movie."""
+        existing = Movie.query.get_or_404(movie.id)
+        existing.title = movie.title
+        existing.director = movie.director
+        existing.year = movie.year
+        existing.rating = movie.rating
+        db.session.commit()
+        print(f"Movie '{existing.title}' updated successfully!")
 
     def delete_movie(self, movie_id):
         """This method deletes a movie from the database by its ID."""
-        movie = Movie.query.get(movie_id)
-        if movie:
-            db.session.delete(movie)
-            db.session.commit()
-            print(f"Movie with ID {movie_id} deleted successfully!")
-        else:
-            print(f"This method could not find a movie with ID {movie_id}.")
+        movie = Movie.query.get_or_404(movie_id)
+        db.session.delete(movie)
+        db.session.commit()
+        print(f"Movie with ID {movie_id} deleted successfully!")

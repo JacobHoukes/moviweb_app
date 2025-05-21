@@ -2,16 +2,16 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>MoviWeb App - Update a movie</title>
+    <title>Update Movie Rating - MovieWeb App</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h1>Update Movie</h1>
+    <h1>Update Movie Rating</h1>
     <form method="POST">
-        <label for="title">New Title:</label>
-        <input type="text" id="title" name="title" value="{{ movie.title }}" required>
-        <button type="submit">Update</button>
+        <label for="rating">New Rating (0–10):</label>
+        <input type="number" step="0.1" min="0" max="10" id="rating" name="rating" required>
+        <button type="submit">Update Rating</button>
     </form>
-    <p><a href="/users/{{ user.id }}">Back to Movies</a></p>
+    <p><a href="{{ url_for('user_movies', user_id=user_id) }}">Back to movie list</a></p>
 </body>
 </html>

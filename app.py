@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, redirect, url_for
 from datamanager.sqlite_data_manager import SQLiteDataManager
 from models import User, Movie
 import os
@@ -19,7 +19,7 @@ def home():
     return render_template('home.html')
 
 
-@app.route('/users', methods=['GET'])
+@app.route('/users')
 def list_users():
     """This method shows a list of all users."""
     users = data_manager.get_all_users()
@@ -28,9 +28,8 @@ def list_users():
 
 @app.route('/users/<int:user_id>', methods=['GET'])
 def user_movies(user_id):
-    """This method shows all movies for a specific user."""
-    movies = data_manager.get_user_movies(user_id)
-    return render_template('user_movies.html', user_id=user_id, movies=movies)
+    user = User.query.get_or_404(user_id)
+    return render_template('user_movies.html', user=user, movies=user.movies)
 
 
 @app.route('/add_user', methods=['GET', 'POST'])
@@ -38,9 +37,12 @@ def add_user():
     """This method adds a new user to the database."""
     if request.method == 'POST':
         name = request.form['name']
-        user = User(name=name)
-        data_manager.add_user(user)
-        return render_template('message.html', message="User added!")
+        try:
+            user = User(name=name)
+            data_manager.add_user(user)
+            return redirect(url_for('user_movies', user_id=user.id))
+        except Exception as e:
+            print(f"Failed to add user: {e}")
 
     return render_template('add_user.html')
 
@@ -48,13 +50,29 @@ def add_user():
 @app.route('/users/<int:user_id>/add_movie', methods=['GET', 'POST'])
 def add_movie(user_id):
     """This method adds a movie to a user's movie list."""
+    user = User.query.get_or_404(user_id)
+
     if request.method == 'POST':
         title = request.form['title']
-        movie = Movie(title=title, user_id=user_id)
-        data_manager.add_movie(movie)
-        return render_template('message.html', message="Movie added!")
+        director = request.form['director']
+        year = request.form['year']
+        rating = request.form['rating']
 
-    return render_template('add_movie.html', user_id=user_id)
+        try:
+            movie = Movie(
+                title=title,
+                director=director,
+                year=int(year),
+                rating=float(rating),
+                user_id=user_id
+            )
+            data_manager.add_movie(movie)
+            return redirect(url_for('user_movies', user_id=user_id))
+        except Exception as e:
+            print(f"Failed to add movie: {e}")
+            return render_template('message.html', message="Failed to add movie.", user_id=user_id)
+
+    return render_template('add_movie.html', user=user)
 
 
 @app.route('/users/<int:user_id>/update_movie/<int:movie_id>', methods=['GET', 'POST'])
@@ -77,4 +95,4 @@ def delete_movie(user_id, movie_id):
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5001, debug=True)
+    app.run(host='0.0.0.0', port=5002, debug=True)
