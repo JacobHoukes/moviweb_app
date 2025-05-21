@@ -3,12 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <title>Message</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <div class="message-box">
-        <h1>{{ message }}</h1>
-        <a href="{{ url_for('user_movies', user_id=user_id) }}">Back to movie list</a>
-    </div>
+    <h2>{{ message }}</h2>
+
+    {% if user_id %}
+        <a href="{{ url_for('user_movies', user_id=user_id) }}">Back to my favorite movies</a>
+    {% else %}
+        <a href="{{ url_for('home') }}">Return home</a>
+    {% endif %}
 </body>
 </html>

@@ -23,14 +23,23 @@ def home():
 @app.route('/users')
 def list_users():
     """This method shows a list of all users."""
-    users = data_manager.get_all_users()
-    return render_template('users.html', users=users)
+    try:
+        users = data_manager.get_all_users()
+        return render_template('users.html', users=users)
+    except Exception as e:
+        print(f"Error fetching users: {e}")
+        return render_template("message.html", message="Failed to load users.")
 
 
 @app.route('/users/<int:user_id>', methods=['GET'])
 def user_movies(user_id):
-    user = User.query.get_or_404(user_id)
-    return render_template('user_movies.html', user=user, movies=user.movies)
+    """This method fetches and displays the list of movies for a given user."""
+    try:
+        user = User.query.get_or_404(user_id)
+        return render_template('user_movies.html', user=user, movies=user.movies)
+    except Exception as e:
+        print(f"Error fetching user or movies: {e}")
+        return render_template("message.html", message="Unable to load user or movies.")
 
 
 @app.route('/add_user', methods=['GET', 'POST'])
@@ -44,7 +53,7 @@ def add_user():
             return redirect(url_for('user_movies', user_id=user.id))
         except Exception as e:
             print(f"Failed to add user: {e}")
-
+            return render_template('message.html', message="Failed to add user.")
     return render_template('add_user.html')
 
 
@@ -110,35 +119,38 @@ def update_movie(user_id, movie_id):
         except Exception as e:
             db.session.rollback()
             print(f"Error updating movie rating: {e}")
-            return render_template('message.html', message="Failed to update rating.")
+            return render_template('message.html', message="Failed to update rating.", user_id=user_id)
 
     return render_template('update_movie.html', user=user, movie=movie)
 
 
 @app.route('/users/<int:user_id>/delete_movie/<int:movie_id>', methods=['POST'])
 def delete_movie(user_id, movie_id):
-    movie = Movie.query.filter_by(id=movie_id, user_id=user_id).first()
-
-    if movie:
-        try:
+    """This method deletes a movie from a user's movie list."""
+    try:
+        movie = Movie.query.filter_by(id=movie_id, user_id=user_id).first()
+        if movie:
             db.session.delete(movie)
             db.session.commit()
             return render_template('message.html', message=f"Movie {movie.title} deleted for user {user_id}!",
                                    user_id=user_id)
-        except Exception as e:
-            db.session.rollback()
-            return render_template('message.html', message="Failed to delete movie.: {e}", user_id=user_id)
-    else:
-        return render_template('message.html', message="Movie not found.", user_id=user_id)
+        else:
+            return render_template('message.html', message="Movie not found.", user_id=user_id)
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error deleting movie: {e}")
+        return render_template('message.html', message="Failed to delete movie.", user_id=user_id)
 
 
 @app.errorhandler(404)
 def page_not_found(error):
+    "docstrings"
     return render_template("404.html"), 404
 
 
 @app.errorhandler(500)
 def internal_server_error(error):
+    "docstrings"
     return render_template("500.html"), 500
 
 
