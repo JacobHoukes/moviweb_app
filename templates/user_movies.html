@@ -1,46 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>{{ user.name }}'s Movies - MovieWeb App</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <title>{{ user.name }}{% if user.name.endswith('s') %}'{% else %}'s{% endif %} Movies - MovieWeb App</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-    <div class="form-container">
-        <h1>{{ user.name }}'s Movies</h1>
+  <div class="form-container">
+    <h1>{{ user.name }}{% if user.name.endswith('s') %}'{% else %}'s{% endif %} Movies</h1>
 
-        <a class="button-link" href="{{ url_for('add_movie', user_id=user.id) }}">Add Movie</a>
+    <a class="button-link" href="{{ url_for('add_movie', user_id=user.id) }}">Add movie</a>
 
-        {% if movies %}
-            <ul class="movie-list">
-                {% for movie in movies %}
-                    <li class="movie-box">
-                        <div class="movie-info">
-                            <div class="movie-title">{{ movie.title }}</div>
-                            <p><strong>Director:</strong> {{ movie.director }}</p>
-                            <p><strong>Year:</strong> {{ movie.year }}</p>
-                            <p><strong>Rating:</strong> {{ movie.rating }}</p>
-                        </div>
-                        <div class="movie-actions centered">
-                            <a class="button-link small" href="{{ url_for('update_movie', user_id=user.id, movie_id=movie.id) }}">Update</a>
+    {% if movies %}
+      <ul class="movie-list">
+        {% for movie in movies %}
+          <li class="movie-box">
+            <div class="movie-info">
+              <div class="movie-title">{{ movie.title }}</div>
+              <p><strong>Director:</strong> {{ movie.director }}</p>
+              <p><strong>Year:</strong> {{ movie.year }}</p>
+              <p><strong>Rating:</strong> {{ movie.rating }}</p>
+            </div>
+            <div class="movie-actions centered">
+              <a class="button-link small" href="{{ url_for('update_movie', user_id=user.id, movie_id=movie.id) }}">Update</a>
+              <form class="inline-form" action="{{ url_for('delete_movie', user_id=user.id, movie_id=movie.id) }}" method="POST">
+                <button class="small danger" type="submit">Delete</button>
+              </form>
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <ul class="movie-list">
+        <li class="movie-box no-movies">
+          <p>No movies found for this user.</p>
+        </li>
+      </ul>
+    {% endif %}
 
-                            <form class="inline-form" action="{{ url_for('delete_movie', user_id=user.id, movie_id=movie.id) }}" method="POST">
-                                <button class="small danger" type="submit">Delete</button>
-                            </form>
-                        </div>
-                    </li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <ul class="movie-list">
-                <li class="movie-box no-movies">
-                    <p>No movies found for this user.</p>
-                </li>
-            </ul>
-        {% endif %}
-
-        <a class="button-link bottom-space" href="{{ url_for('list_users') }}">Back to Users</a>
-    </div>
+    <a class="button-link bottom-space" href="{{ url_for('list_users') }}">Back to users</a>
+  </div>
 </body>
 </html>

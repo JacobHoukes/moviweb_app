@@ -57,6 +57,36 @@ def add_user():
     return render_template('add_user.html')
 
 
+@app.route('/users/delete/<int:user_id>', methods=['POST'])
+def delete_user(user_id):
+    """This method deletes a user and all their associated movies."""
+    try:
+        user = User.query.get(user_id)
+        if user:
+            user_name = user.name
+            db.session.delete(user)
+            db.session.commit()
+            return render_template(
+                "message.html",
+                message=f"User {user_name} was successfully deleted.",
+                redirect_to='users'
+            )
+        else:
+            return render_template(
+                "message.html",
+                message="User not found.",
+                redirect_to='users'
+            )
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error deleting user: {e}")
+        return render_template(
+            "message.html",
+            message="Failed to delete user.",
+            redirect_to='users'
+        )
+
+
 @app.route('/users/<int:user_id>/add_movie', methods=['GET', 'POST'])
 def add_movie(user_id):
     """This method adds a movie to a user's movie list using the OMDb API."""

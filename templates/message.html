@@ -11,9 +11,11 @@
         <h1>{{ message }}</h1>
 
         {% if user_id %}
-            <a class="button-link bottom-space" href="{{ url_for('user_movies', user_id=user_id) }}">Back to my favorite movies</a>
+            <a class="button-link bottom-space" href="{{ url_for('user_movies', user_id=user_id) }}">Back to my movies</a>
+        {% elif redirect_to == 'users' %}
+            <a class="button-link bottom-space" href="{{ url_for('list_users') }}">Back to users</a>
         {% else %}
-            <a class="button-link bottom-space" href="{{ url_for('home') }}">Return home</a>
+            <a class="button-link bottom-space" href="{{ url_for('home') }}">Back to home</a>
         {% endif %}
     </div>
 </body>
