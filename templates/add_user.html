@@ -4,14 +4,20 @@
     <meta charset="UTF-8">
     <title>Adding a User - MovieWeb App</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-    <h1>Add a New User</h1>
-    <form method="POST">
-        <label for="name">Name:</label>
-        <input type="text" id="name" name="name" required>
-        <button type="submit">Add user</button>
-    </form>
-    <p><a href="/users">Back to users</a></p>
+    <div class="form-container">
+        <h1>Add a New User</h1>
+
+        <form method="POST">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+
+            <button class="button-link" type="submit">Add User</button>
+        </form>
+
+        <a class="button-link bottom-space" href="{{ url_for('list_users') }}">Back to users</a>
+    </div>
 </body>
 </html>

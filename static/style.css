@@ -1,0 +1,308 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    font-family: 'Calibri', sans-serif;
+    background: linear-gradient(to bottom, #0a330e, #145c24);
+    color: #aee8b4;
+    animation: fadeIn 1s ease-in-out;
+}
+
+.home-container,
+.users-container,
+.form-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 15vh;
+    text-align: center;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+h1 {
+    font-size: 3rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    color: #bff5c0;
+    text-align: center;
+}
+
+p,
+.user-list li,
+.form-container p {
+    font-size: 1.8rem;
+    background-color: #072b0c;
+    border-radius: 10px;
+    padding: 1rem 1.5rem;
+    margin: 0.5rem 0;
+    max-width: 700px;
+    line-height: 1.5;
+    color: #aee8b4;
+}
+
+.user-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 1rem;
+}
+
+.user-list a,
+.form-container a {
+    font-size: 1.6rem;
+    color: #aee8b4;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.user-list a:hover,
+.form-container a:hover {
+    color: #ffffff;
+}
+
+.button-link,
+button {
+    display: inline-block;
+    margin-top: 1.5rem;
+    padding: 0.8rem 1.5rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+    background-color: #1c6e2b;
+    color: #eaffea;
+    border: none;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+}
+
+.button-link:hover,
+button:hover {
+    background-color: #258c37;
+    color: #ffffff;
+}
+
+.button-link.small,
+button.small {
+    padding: 0.4rem 1rem;
+    font-size: 1rem;
+    margin-top: 0;
+}
+
+.button-link.danger,
+button.danger {
+    background-color: #8a1c1c;
+}
+
+.button-link.danger:hover,
+button.danger:hover {
+    background-color: #b32424;
+}
+
+/* ✅ NEU: Verbesserte Darstellung für Action-Buttons */
+.movie-actions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 0.5rem;
+    flex-wrap: wrap;
+}
+
+/* ✅ NEU: Inline-Formular damit "Delete" nicht in neuer Zeile ist */
+.inline-form {
+    display: inline-flex;
+    align-items: center;
+    margin: 0;
+}
+
+/* Standardformulare */
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 2rem;
+    width: 100%;
+    max-width: 400px;
+}
+
+form button {
+    align-self: center;
+}
+
+label {
+    font-size: 1.4rem;
+    align-self: flex-start;
+    color: #aee8b4;
+    margin-bottom: 0.3rem;
+}
+
+input[type="text"],
+input[type="number"] {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: none;
+    border-radius: 8px;
+    background-color: #05240a;
+    color: #aee8b4;
+    font-size: 1.2rem;
+}
+
+input[type="text"]::placeholder,
+input[type="number"]::placeholder {
+    color: #85c79b;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@media (max-width: 600px) {
+    h1 {
+        font-size: 2.6rem;
+    }
+
+    p,
+    .user-list a,
+    input,
+    label,
+    button,
+    .button-link {
+        font-size: 1.3rem;
+    }
+
+    .button-link.small,
+    button.small {
+        font-size: 1.1rem;
+    }
+}
+
+.button-link.bottom-space {
+    margin-bottom: 3rem;
+}
+
+/* ✅ NEU: movie-list optimiert, um Kästchenbreite zu begrenzen */
+.movie-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 400px));
+    gap: 2rem;
+    padding: 2rem;
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    list-style: none;
+    justify-content: center;
+}
+
+/* ✅ NEU: movie-box max-width gesetzt */
+.movie-box {
+    background-color: #072b0c;
+    border-radius: 10px;
+    padding: 1.5rem;
+    color: #aee8b4;
+    font-size: 1.6rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+/* NEU: Zentrierung für die "No movies found"-Nachricht */
+.movie-box.no-movies {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 150px;
+}
+
+.movie-box.no-movies p {
+    text-align: center;
+    margin: 0;
+}
+
+.movie-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.movie-title {
+    font-size: 2.4rem;
+    font-weight: bold;
+    color: #d1f7de;
+    margin-bottom: 0.6rem;
+}
+
+.movie-info p {
+    font-size: 1.2rem;
+    margin: 0.3rem 0;
+    line-height: 1.5;
+    text-align: center;
+}
+
+.movie-actions.centered {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.movie-actions.centered .button-link,
+.movie-actions.centered button {
+    margin-top: 0;
+}
+
+.button-link,
+.button-link:visited,
+.button-link:active,
+button.button-link {
+    display: inline-block;
+    margin-top: 1.5rem;
+    padding: 0.8rem 1.5rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+    background-color: #1c6e2b;
+    color: #eaffea;
+    border: none;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+    text-align: center;
+}
+
+.button-link:hover,
+button.button-link:hover {
+    background-color: #258c37;
+    color: #ffffff;
+}
+
+.button-link.small,
+button.button-link.small {
+    padding: 0.4rem 1rem;
+    font-size: 1rem;
+    margin-top: 0;
+}
+
+.button-link.danger,
+button.button-link.danger {
+    background-color: #8a1c1c;
+}
+
+.button-link.danger:hover,
+button.button-link.danger:hover {
+    background-color: #b32424;
+}

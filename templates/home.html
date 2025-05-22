@@ -2,12 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Welcome to the MovieWeb App</title>
+    <title>Welcome - MovieWeb App</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-    <h1>Welcome to the MovieWeb App</h1>
-    <p>This is the homepage.</p>
-    <p><a href="/users">View users</a></p>
+    <div class="form-container">
+        <h1>Welcome to MovieWeb App</h1>
+        <p>Manage your movies with ease and style.</p>
+        <a class="button-link" href="{{ url_for('list_users') }}">Users</a>
+    </div>
 </body>
 </html>

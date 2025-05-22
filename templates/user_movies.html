@@ -4,25 +4,43 @@
     <meta charset="UTF-8">
     <title>{{ user.name }}'s Movies - MovieWeb App</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-    <h1>{{ user.name }}'s Favorite Movies</h1>
+    <div class="form-container">
+        <h1>{{ user.name }}'s Movies</h1>
 
-    <ul>
-        {% for movie in movies %}
-            <li>
-                {{ movie.title }} ({{ movie.year }}) - Directed by {{ movie.director }} - Rating: {{ movie.rating }}
-                <a href="/users/{{ user.id }}/update_movie/{{ movie.id }}">Update</a>
-                <form action="/users/{{ user.id }}/delete_movie/{{ movie.id }}" method="post" style="display:inline;">
-                    <button type="submit" onclick="return confirm('Are you sure you want to delete this movie?');">Delete</button>
-                </form>
-            </li>
+        <a class="button-link" href="{{ url_for('add_movie', user_id=user.id) }}">Add Movie</a>
+
+        {% if movies %}
+            <ul class="movie-list">
+                {% for movie in movies %}
+                    <li class="movie-box">
+                        <div class="movie-info">
+                            <div class="movie-title">{{ movie.title }}</div>
+                            <p><strong>Director:</strong> {{ movie.director }}</p>
+                            <p><strong>Year:</strong> {{ movie.year }}</p>
+                            <p><strong>Rating:</strong> {{ movie.rating }}</p>
+                        </div>
+                        <div class="movie-actions centered">
+                            <a class="button-link small" href="{{ url_for('update_movie', user_id=user.id, movie_id=movie.id) }}">Update</a>
+
+                            <form class="inline-form" action="{{ url_for('delete_movie', user_id=user.id, movie_id=movie.id) }}" method="POST">
+                                <button class="small danger" type="submit">Delete</button>
+                            </form>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
         {% else %}
-            <li>No movies found for this user.</li>
-        {% endfor %}
-    </ul>
+            <ul class="movie-list">
+                <li class="movie-box no-movies">
+                    <p>No movies found for this user.</p>
+                </li>
+            </ul>
+        {% endif %}
 
-    <p><a href="/users/{{ user.id }}/add_movie">Add movie</a></p>
-    <p><a href="/users">Back to users</a></p>
+        <a class="button-link bottom-space" href="{{ url_for('list_users') }}">Back to Users</a>
+    </div>
 </body>
 </html>
