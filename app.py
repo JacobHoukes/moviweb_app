@@ -158,14 +158,19 @@ def update_movie(user_id, movie_id):
 def delete_movie(user_id, movie_id):
     """This method deletes a movie from a user's movie list."""
     try:
+        user = User.query.get(user_id)
         movie = Movie.query.filter_by(id=movie_id, user_id=user_id).first()
-        if movie:
+        if user and movie:
+            user_name = user.name
             db.session.delete(movie)
             db.session.commit()
-            return render_template('message.html', message=f"Movie {movie.title} deleted for user {user_id}!",
-                                   user_id=user_id)
+            return render_template(
+                'message.html',
+                message=f"Movie {movie.title} deleted for user {user_name}!",
+                user_id=user_id
+            )
         else:
-            return render_template('message.html', message="Movie not found.", user_id=user_id)
+            return render_template('message.html', message="Movie or user not found.", user_id=user_id)
     except Exception as e:
         db.session.rollback()
         print(f"Error deleting movie: {e}")
