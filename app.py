@@ -113,6 +113,7 @@ def add_movie(user_id):
                         director=data.get("Director", "Unknown"),
                         year=int(data.get("Year", 0)),
                         rating=float(rating),
+                        poster=data.get("Poster"),
                         user_id=user_id
                     )
                     data_manager.add_movie(movie)
