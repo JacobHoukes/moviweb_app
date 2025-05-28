@@ -10,7 +10,7 @@
     <div style="max-width: 800px; margin: auto;">
         <h1>Users</h1>
 
-        <a class="button-link" href="{{ url_for('add_user') }}">Add User</a>
+        <a class="button-link" href="{{ url_for('add_user') }}">Add user</a>
 
         {% if users %}
             <ul style="list-style: none; padding: 0; margin-top: 2rem;">
@@ -32,10 +32,10 @@
                 {% endfor %}
             </ul>
         {% else %}
-            <p style="margin-top: 2rem;">No users found.</p>
+            <p style="margin-top: 2rem;">No users found</p>
         {% endif %}
 
-        <a class="button-link" style="display: inline-block; margin-top: 2rem;" href="{{ url_for('home') }}">Back to Homepage</a>
+        <a class="button-link" style="display: inline-block; margin-top: 2rem;" href="{{ url_for('home') }}">Back to homepage</a>
     </div>
 </body>
 </html>

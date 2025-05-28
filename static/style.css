@@ -89,13 +89,20 @@ a:hover {
     display: flex;
     justify-content: space-around;
     margin-top: 1rem;
+    gap: 0.5rem;
 }
 
 .button-group form {
     margin: 0;
+    display: inline-block;
 }
 
-.button-link, .update-button, .delete-button {
+.button-link,
+.update-button,
+.delete-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     padding: 0.5rem 1rem;
     border: none;
     border-radius: 8px;
@@ -103,32 +110,52 @@ a:hover {
     cursor: pointer;
     transition: background-color 0.2s ease;
     text-align: center;
-    display: inline-block;
+    text-decoration: none;
+    color: #fff;
+    font-size: 1rem;
+    white-space: nowrap;
+    box-sizing: border-box;
 }
 
 .button-link {
     background-color: #0e7513;
-    color: #fff;
 }
 
 .button-link:hover {
-    background-color: #0e7513;
+    background-color: #0c5f10;
 }
 
 .update-button {
     background-color: #0e7513;
-    color: #fff;
 }
 
 .update-button:hover {
-    background-color: #0e7513;
+    background-color: #0c5f10;
 }
 
 .delete-button {
     background-color: #9e100d;
-    color: #fff;
 }
 
 .delete-button:hover {
-    background-color: #9e100d;
+    background-color: #7c0c0a;
+}
+
+.home-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 85vh;
+}
+
+.home-wrapper .movie-info {
+    width: 600px;
+    height: auto;
+    padding: 3rem;
+    font-size: 1.2rem;
+}
+
+.home-wrapper .button-link {
+    width: fit-content;
+    align-self: center;
 }

@@ -8,7 +8,16 @@
 </head>
 <body>
     <h1>{{ user.name }}{% if user.name.endswith('s') %}'{% else %}'s{% endif %} Movies</h1>
-
+        <br>
+        <br>
+        <a class="button-link" href="{{ url_for('add_movie', user_id=user.id) }}">Add new movie</a>
+        <br>
+        <br>
+        <a class="button-link" href="{{ url_for('list_users') }}">Back to users</a>
+    <br>
+    <br>
+    <br>
+    <br>
     {% if movies %}
         <div class="movie-grid">
             {% for movie in movies %}
@@ -35,6 +44,5 @@
         <p>No movies found for {{ user.name }}.</p>
     {% endif %}
 
-    <a class="button-link" href="{{ url_for('add_movie', user_id=user.id) }}">Add New Movie</a>
 </body>
 </html>
