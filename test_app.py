@@ -3,7 +3,6 @@ from app import app
 
 class MovieWebAppTestCase(unittest.TestCase):
     def setUp(self):
-        # Set up test client
         self.client = app.test_client()
         self.client.testing = True
 
